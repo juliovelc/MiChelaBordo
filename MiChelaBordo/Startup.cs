@@ -1,3 +1,4 @@
+using MiChelaBordo.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -11,6 +12,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MiChelaBordo.Models.Common;
+using System.Text;
+//install to use Jwt via Package manager console
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MiChelaBordo
 {
@@ -34,9 +40,37 @@ namespace MiChelaBordo
                     {
                         builder.WithHeaders("*");
                         builder.WithOrigins("*");
+                        builder.WithMethods("*");
                     });
             });
             services.AddControllers();
+
+            //injection -> AppSettings node from appsettings.json file
+            var appSettingsSection = Configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+
+            //Json Web Token Configuration
+            var appSettings = appSettingsSection.Get<AppSettings>();
+            byte[] key = Encoding.ASCII.GetBytes(appSettings.Secret);
+            services.AddAuthentication(d =>
+            {
+                d.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                d.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(d =>
+            {
+                d.RequireHttpsMetadata = false;
+                d.SaveToken = true;
+                d.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
+
+
+            services.AddScoped<ICustomerService, CustomerService>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MiChelaBordo", Version = "v1" });
@@ -58,6 +92,9 @@ namespace MiChelaBordo
             app.UseRouting();
 
             app.UseCors(MyCors);
+            
+            //JWT
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

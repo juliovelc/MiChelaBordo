@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MiChelaBordo.Models;
 using MiChelaBordo.Models.Response;
 using MiChelaBordo.Models.Request;
+using MiChelaBordo.Services;
 
 namespace MiChelaBordo.Controllers
 {
@@ -14,6 +15,31 @@ namespace MiChelaBordo.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
+        private ICustomerService _customerService;
+
+        public CustomerController(ICustomerService customerService)
+        {
+            _customerService = customerService;
+        }
+
+        [HttpPost("login")]
+        public IActionResult Authenticate([FromBody] AuthRequest model)
+        {
+            ResponseTemplate res = new ResponseTemplate();
+            var authResponse = _customerService.Auth(model);
+
+            if (authResponse == null)
+            {
+                res.Success = 0;
+                res.Message = "Wrong username or password";
+                return BadRequest(res);
+            }
+            res.Success = 1;
+            res.Data = authResponse;
+            return Ok(res);
+        }
+
+       
         [HttpGet]
         public IActionResult Get()
         {
@@ -53,6 +79,28 @@ namespace MiChelaBordo.Controllers
             catch (Exception ex)
             {
 
+                res.Message = ex.Message;
+            }
+            return Ok(res);
+        }
+
+        [HttpDelete("{mail}")]
+        public IActionResult Delete(string mail)
+        {
+            ResponseTemplate res = new ResponseTemplate();
+            try
+            {          
+                using (MiChelaBordoContext db = new MiChelaBordoContext())
+                {
+                    Customer del = db.Customers.Where(r => r.IdMail == mail).First();
+                    db.Customers.Remove(del);
+                    db.SaveChanges();
+                    res.Success = 1;
+                }
+
+            }
+            catch (Exception ex)
+            {
                 res.Message = ex.Message;
             }
             return Ok(res);
