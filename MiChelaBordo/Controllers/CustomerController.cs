@@ -8,11 +8,14 @@ using MiChelaBordo.Models;
 using MiChelaBordo.Models.Response;
 using MiChelaBordo.Models.Request;
 using MiChelaBordo.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MiChelaBordo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
+
     public class CustomerController : ControllerBase
     {
         private ICustomerService _customerService;
