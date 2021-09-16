@@ -21,41 +21,48 @@ namespace MiChelaBordo.Controllers
         public IActionResult Add(SalesRequest model)
         {
             ResponseTemplate res = new ResponseTemplate();
-
-            try
+            using (MiChelaBordoContext db = new MiChelaBordoContext())
             {
-                using (MiChelaBordoContext db = new MiChelaBordoContext())
+                using (var transaction = db.Database.BeginTransaction())
                 {
-                    Purchase purchase = new Purchase()
+                    try
                     {
-                        Total = model.Total,
-                        PurchaseTime = DateTime.Now,
-                        UserMail = model.IdMail,
-                        Subtotal = model.Subtotal,
-                    };
-                    db.Purchases.Add(purchase);
-                    db.SaveChanges(); //after this, purchase now have an id
-
-                    //adding concepts
-                    foreach (var mConcept in model.Concepts)
-                    {
-                        var c = new Models.Concept
+                        Purchase purchase = new Purchase()
                         {
-                            Amount = mConcept.Amount,
-                            ProductId = mConcept.IdProduct,
-                            UnitPrice = mConcept.UnitPrice,
-                            PurchaseId = purchase.Id,
+                            Subtotal = model.Concepts.Sum(x => x.Quantity * x.UnitPrice),
+                            PurchaseTime = DateTime.Now,
+                            UserMail = model.IdMail,
                         };
-                        db.Concepts.Add(c);
+                        purchase.Total = Decimal.Multiply(purchase.Subtotal, 1.16m);
 
+                        db.Purchases.Add(purchase);
+                        db.SaveChanges(); //after this, purchase now have an id
+
+                        //adding concepts
+                        foreach (var mConcept in model.Concepts)
+                        {
+                            var c = new Models.Concept
+                            {
+                                Amount = mConcept.Amount,
+                                ProductId = mConcept.IdProduct,
+                                UnitPrice = mConcept.UnitPrice,
+                                PurchaseId = purchase.Id,
+                            };
+                            db.Concepts.Add(c);
+
+                        }
+                        db.SaveChanges();
+                        transaction.Commit();
+                        res.Success = 1;
                     }
-                    db.SaveChanges();
-                    res.Success = 1;
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        res.Message = ex.Message;
+                    }
+                    
                 }
-            }
-            catch (Exception ex)
-            {
-                res.Message = ex.Message;
+
             }
             return Ok(res);
         }

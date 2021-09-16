@@ -30,7 +30,7 @@ namespace MiChelaBordo.Services
             AuthResponse res = new AuthResponse();
             using (MiChelaBordoContext db = new MiChelaBordoContext())
             {
-                string encryptedPass = MiChelaBordo.Tools.Encrypt.GetSHA252(model.Pass);
+                string encryptedPass = MiChelaBordo.Tools.Encrypt.GetSHA252(model.Password);
                 var customer = db.Customers.Where(
                     v => v.IdMail == model.Mail && v.Pass == encryptedPass).FirstOrDefault();
                 if (customer == null)

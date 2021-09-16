@@ -8,7 +8,7 @@ namespace MiChelaBordo.Models.Request
 {
     public class AuthRequest
     {
-        [Required] public string Mail { get; set; }
-        [Required] public string Pass { get; set; }
+         [Required] public string Mail { get; set; }
+         [Required] public string Password { get; set; }
     }
 }

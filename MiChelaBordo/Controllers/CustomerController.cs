@@ -14,7 +14,7 @@ namespace MiChelaBordo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+  
 
 
     public class CustomerController : ControllerBase
