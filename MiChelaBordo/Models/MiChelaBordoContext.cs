@@ -27,7 +27,7 @@ namespace MiChelaBordo.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=DESKTOP-11J5CAP\\SQLEXPRESS;Database=MiChelaBordo;Trusted_Connection=True;");
             }
         }
@@ -45,6 +45,10 @@ namespace MiChelaBordo.Models
                 entity.Property(e => e.ProductId).HasColumnName("Product_Id");
 
                 entity.Property(e => e.PurchaseId).HasColumnName("Purchase_Id");
+
+                entity.Property(e => e.UnitPrice)
+                    .HasColumnType("decimal(10, 2)")
+                    .HasColumnName("Unit_Price");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.Concepts)

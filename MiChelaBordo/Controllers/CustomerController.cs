@@ -43,7 +43,7 @@ namespace MiChelaBordo.Controllers
             return Ok(res);
         }
 
-       
+
         [HttpGet]
         public IActionResult Get()
         {
@@ -57,7 +57,7 @@ namespace MiChelaBordo.Controllers
                 return Ok(res);
             }
         }
-       
+
 
         [HttpPost]
         public IActionResult Insert(CustomerRequest customerRequest)
@@ -93,7 +93,7 @@ namespace MiChelaBordo.Controllers
         {
             ResponseTemplate res = new ResponseTemplate();
             try
-            {          
+            {
                 using (MiChelaBordoContext db = new MiChelaBordoContext())
                 {
                     Customer del = db.Customers.Where(r => r.IdMail == mail).First();

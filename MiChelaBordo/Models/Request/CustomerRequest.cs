@@ -14,10 +14,6 @@ namespace MiChelaBordo.Models.Request
         public string TelNumber { get; set; }
         public string Rfc { get; set; }
 
-        public string JoinAllProps(CustomerRequest req)
-        {
-            var arr = req.GetType().GetProperties().Select(c => c.GetValue(req).ToString()).ToArray();
-            return String.Join(",   ", arr);
-        }
+       
     }
 }
