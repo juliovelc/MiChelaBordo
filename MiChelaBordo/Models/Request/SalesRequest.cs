@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace MiChelaBordo.Models.Request
 {
     public class SalesRequest
     {
-        public string IdMail { get; set; }
+        [Required] public string IdMail { get; set; }
         public decimal Subtotal { get; set; }
         public decimal Total { get; set; }
-        public List<Concept> Concepts { get; set; }
+        [MinLength(1)] public List<Concept> Concepts { get; set; }
 
         public SalesRequest() 
         {

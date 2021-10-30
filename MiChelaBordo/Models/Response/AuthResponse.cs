@@ -11,3 +11,4 @@ namespace MiChelaBordo.Models.Response
         public string Token { get; set; }
     }
 }
+ 

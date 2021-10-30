@@ -30,7 +30,7 @@ namespace MiChelaBordo.Services
             AuthResponse res = new AuthResponse();
             using (MiChelaBordoContext db = new MiChelaBordoContext())
             {
-                string encryptedPass = MiChelaBordo.Tools.Encrypt.GetSHA252(model.Password);
+                string encryptedPass = Tools.Encrypt.GetSHA252(model.Password);
                 var customer = db.Customers.Where(
                     v => v.IdMail == model.Mail && v.Pass == encryptedPass).FirstOrDefault();
                 if (customer == null)
@@ -52,7 +52,7 @@ namespace MiChelaBordo.Services
                     new Claim[] {
                         new Claim(ClaimTypes.NameIdentifier, authRequest.Mail)
                     }),
-                Expires = DateTime.UtcNow.AddDays(60),
+                Expires = DateTime.UtcNow.AddMinutes(30),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
 

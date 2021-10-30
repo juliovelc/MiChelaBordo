@@ -21,6 +21,7 @@ namespace MiChelaBordo.Models
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Purchase> Purchases { get; set; }
+        public virtual DbSet<Reservation> Reservations { get; set; }
         public virtual DbSet<Road> Roads { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -140,6 +141,39 @@ namespace MiChelaBordo.Models
                     .HasForeignKey(d => d.UserMail)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_CustomerId");
+            });
+
+            modelBuilder.Entity<Reservation>(entity =>
+            {
+                entity.ToTable("Reservation");
+
+                entity.Property(e => e.CompleteName)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .IsUnicode(false)
+                    .HasColumnName("Complete_Name");
+
+                entity.Property(e => e.Email)
+                    .IsRequired()
+                    .HasMaxLength(120)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.RouteName)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("Route_Name");
+
+                entity.Property(e => e.Telephone)
+                    .IsRequired()
+                    .HasMaxLength(40)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.TimeSchedule)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("Time_Schedule");
             });
 
             modelBuilder.Entity<Road>(entity =>

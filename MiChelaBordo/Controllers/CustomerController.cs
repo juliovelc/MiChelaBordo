@@ -71,7 +71,7 @@ namespace MiChelaBordo.Controllers
                     {
                         CompleteName = customerRequest.CompleteName,
                         IdMail = customerRequest.IdMail,
-                        Pass = customerRequest.Pass,
+                        Pass = Tools.Encrypt.GetSHA252(customerRequest.Pass),
                         Rfc = customerRequest.Rfc,
                         TelNumber = customerRequest.TelNumber
                     };
@@ -108,6 +108,60 @@ namespace MiChelaBordo.Controllers
                 res.Message = ex.Message;
             }
             return Ok(res);
+        }
+
+
+
+        [HttpPut]
+        public IActionResult Modify(CustomerRequest customer)
+        {
+            ResponseTemplate res = new ResponseTemplate();
+            try
+            {
+                using (MiChelaBordoContext db = new MiChelaBordoContext())
+                {
+                    Customer foundCustomer = db.Customers.Find(customer.IdMail);
+
+                    //Update values
+                    ModifyItems(ref foundCustomer, customer);
+
+                    //Performs modification
+                    db.Entry(foundCustomer).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    db.SaveChanges();
+                    res.Success = 1;
+                    return Ok(res);
+                }
+            }
+            catch (Exception ex)
+            {
+                res.Success = 0;
+                res.Message = ex.Message;
+                return BadRequest(res);
+            }
+           
+
+
+
+
+
+
+        }
+
+
+        void ModifyItems(ref Customer customer, CustomerRequest custRequest)
+        {
+            //Gets what changed
+            if (custRequest.CompleteName != customer.CompleteName)
+                customer.CompleteName = custRequest.CompleteName;
+
+            if (custRequest.Pass != customer.Pass)
+                customer.Pass = custRequest.Pass;
+
+            if (custRequest.Rfc != customer.Rfc)
+                customer.Rfc = custRequest.Rfc;
+
+            if (custRequest.TelNumber != customer.TelNumber)
+                customer.TelNumber = custRequest.TelNumber;
         }
 
 

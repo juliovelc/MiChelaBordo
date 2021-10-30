@@ -69,8 +69,10 @@ namespace MiChelaBordo
                 };
             });
 
-
+            //dependency injection
             services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<ISaleService, SaleService>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "MiChelaBordo", Version = "v1" });

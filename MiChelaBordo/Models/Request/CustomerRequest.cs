@@ -14,6 +14,5 @@ namespace MiChelaBordo.Models.Request
         public string TelNumber { get; set; }
         public string Rfc { get; set; }
 
-       
     }
 }
